@@ -101,7 +101,8 @@ public class UserServiceImpl
 
         newUser.setUsername(user.getUsername()
             .toLowerCase());
-        newUser.setPassword(user.getPassword());
+        newUser.setPasswordNoEncrypt(user.getPassword());
+        // so you dont encrypt an encrypted pw
         newUser.setPrimaryemail(user.getPrimaryemail()
             .toLowerCase());
 
