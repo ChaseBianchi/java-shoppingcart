@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,8 +18,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ShoppingCartTestApplication.class, properties = {"command.line.runner.enabled=false"})
@@ -82,6 +85,10 @@ public class CartItemServiceImplUnitTestNoDB {
                 .add(new UserRoles(u3,
                         r2));
 
+        userList.add(u1);
+        userList.add(u2);
+        userList.add(u3);
+
         // Adding Products
 
         Product p1 = new Product();
@@ -138,6 +145,20 @@ public class CartItemServiceImplUnitTestNoDB {
 
     @Test
     public void addToCart() {
+        CartItemId cartItemId = new CartItemId(1,1);
+        CartItem newItem = new CartItem();
+        newItem.setComments("blah4");
+        newItem.setQuantity(1);
+        newItem.setProduct(productList.get(0));
+        newItem.setUser(userList.get(0));
+
+        Mockito.when(prodrepos.findById(1L)).thenReturn(Optional.of(productList.get(0)));
+        Mockito.when(userrepos.findById(1L)).thenReturn(Optional.of(userList.get(0)));
+        Mockito.when(cartitemrepos.findById(any(CartItemId.class))).thenReturn(Optional.of(newItem));
+        Mockito.when(cartitemrepos.save(any(CartItem.class))).thenReturn(newItem);
+
+        assertEquals(2, cartitemserv.addToCart(1L, 1L, "Blah5").getQuantity());
+
     }
 
     @Test
