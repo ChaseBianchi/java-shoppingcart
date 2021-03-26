@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -119,24 +120,33 @@ public class CartItemServiceImplUnitTestNoDB {
         // Creating Carts
         CartItem c1 = new CartItem();
         c1.setComments("blah1");
-        c1.setQuantity(1);
+        c1.setQuantity(4);
         c1.setProduct(p1);
         c1.setUser(u1);
         u1.getCarts().add(c1);
 
         CartItem c2 = new CartItem();
-        c1.setComments("blah2");
-        c1.setQuantity(2);
-        c1.setProduct(p2);
-        c1.setUser(u2);
-        u1.getCarts().add(c2);
+        c2.setComments("blah2");
+        c2.setQuantity(4);
+        c2.setProduct(p2);
+        c2.setUser(u2);
+        u2.getCarts().add(c2);
 
         CartItem c3 = new CartItem();
-        c1.setComments("blah3");
-        c1.setQuantity(3);
-        c1.setProduct(p3);
-        c1.setUser(u3);
-        u1.getCarts().add(c3);
+        c3.setComments("blah3");
+        c3.setQuantity(4);
+        c3.setProduct(p3);
+        c3.setUser(u3);
+        u3.getCarts().add(c3);
+
+        CartItem c4 = new CartItem();
+        c4.setComments("blah4");
+        c4.setQuantity(4);
+        c4.setProduct(p3);
+        c4.setUser(u1);
+        u1.getCarts().add(c4);
+
+        MockitoAnnotations.initMocks(this);
     }
 
     @After
@@ -163,5 +173,19 @@ public class CartItemServiceImplUnitTestNoDB {
 
     @Test
     public void removeFromCart() {
+        CartItemId cartItemId = new CartItemId(1,1);
+        CartItem cartItem = new CartItem();
+        cartItem.setComments("blah4");
+        cartItem.setQuantity(1);
+        cartItem.setProduct(productList.get(0));
+        cartItem.setUser(userList.get(0));
+
+        Mockito.when(userrepos.findById(1L)).thenReturn(Optional.of(userList.get(0)));
+        Mockito.when(prodrepos.findById(1L)).thenReturn(Optional.of(productList.get(0)));
+        Mockito.when(cartitemrepos.findById(any(CartItemId.class))).thenReturn(Optional.of(cartItem));
+        Mockito.when(cartitemrepos.save(any(CartItem.class))).thenReturn(cartItem);
+
+        assertEquals(3, cartitemserv.removeFromCart(1L, 1L, "comment").getQuantity());
+
     }
 }
