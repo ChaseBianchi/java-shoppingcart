@@ -25,6 +25,11 @@ public class ProductServiceImpl
     @Autowired
     private CartItemRepository cartrepos;
 
+    @Override
+    public void deleteAll() {
+
+    }
+
     /**
      * Connects this service to the auditing service in order to find the current user
      */
